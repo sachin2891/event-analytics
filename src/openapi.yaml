@@ -1,0 +1,217 @@
+openapi: 3.0.3
+info:
+  title: event-analytics API
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000
+paths:
+  /api/protected:
+    get:
+      summary: Protected endpoint
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true
+          description: API key header
+      responses:
+        "200":
+          description: Success
+  /api/events/metrics:
+    get:
+      summary: Get event metrics
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: eventName
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: period
+          schema:
+            type: string
+          required: false
+      responses:
+        "200":
+          description: Metrics response
+  /api/events:
+    post:
+      summary: Create new events
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+          required: true
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  eventName:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+            example:
+              - userId: a
+                eventName: signup
+                timestamp: "2025-07-20T10:00:00Z"
+              - userId: a
+                eventName: view
+                timestamp: "2025-07-21T11:00:00Z"
+      responses:
+        "201":
+          description: Created
+  /api/generate-api-key:
+    post:
+      summary: Generate API key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orgId:
+                  type: string
+                projectId:
+                  type: string
+            example:
+              orgId: 688207a82bff847ec3b54067
+              projectId: 688208c42bff847ec3b54068
+      responses:
+        "200":
+          description: API key generated
+  /api/events/funnel:
+    get:
+      summary: Get event funnel
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: events
+          schema:
+            type: string
+          required: true
+          description: Comma separated events, e.g. signup,view,checkout
+        - in: query
+          name: country
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: device
+          schema:
+            type: string
+          required: false
+      responses:
+        "200":
+          description: Funnel data
+  /api/events/journeys:
+    get:
+      summary: Get user journeys
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: period
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+        - in: query
+          name: device
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: country
+          schema:
+            type: string
+          required: false
+      responses:
+        "200":
+          description: Journey data
+  /api/events/users/{userId}/journey:
+    get:
+      summary: Get one user journey
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: User ID
+      responses:
+        "200":
+          description: User journey data
+  /api/events/retention:
+    get:
+      summary: Get retention data
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: targetEvent
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: cohort
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: period
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: country
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: device
+          schema:
+            type: string
+          required: false
+      responses:
+        "200":
+          description: Retention data

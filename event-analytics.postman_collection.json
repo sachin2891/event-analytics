@@ -1,0 +1,410 @@
+{
+  "info": {
+    "_postman_id": "8db3ad40-46e8-4897-84d9-624d45478b0a",
+    "name": "event-analytics",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "17421370",
+    "_collection_link": "https://bold-moon-227669.postman.co/workspace/Kisancircle~f5fbae82-23ce-49db-a537-15c0c384b21f/collection/17421370-8db3ad40-46e8-4897-84d9-624d45478b0a?action=share&source=collection_link&creator=17421370"
+  },
+  "item": [
+    {
+      "name": "New Request",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:4000/api/protected",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "protected"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "analytics",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:4000/api/events/metrics?eventName=page_view&period=7d\n",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "events", "metrics"],
+          "query": [
+            {
+              "key": "eventName",
+              "value": "page_view"
+            },
+            {
+              "key": "period",
+              "value": "7d\n"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:4000",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:4000",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:4000/api/events",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\r\n  { \"userId\": \"a\", \"eventName\": \"signup\", \"timestamp\": \"2025-07-20T10:00:00Z\" },\r\n  { \"userId\": \"a\", \"eventName\": \"view\", \"timestamp\": \"2025-07-21T11:00:00Z\" },\r\n  { \"userId\": \"a\", \"eventName\": \"purchase\", \"timestamp\": \"2025-07-23T14:00:00Z\" },\r\n\r\n  { \"userId\": \"b\", \"eventName\": \"signup\", \"timestamp\": \"2025-07-21T09:00:00Z\" },\r\n  { \"userId\": \"b\", \"eventName\": \"purchase\", \"timestamp\": \"2025-07-21T10:00:00Z\" }\r\n]\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:4000/api/events",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "events"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "apiKeyGenerator",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text",
+            "disabled": true
+          },
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\r\n    \"orgId\":\"688207a82bff847ec3b54067\",\r\n    \"projectId\":\"688208c42bff847ec3b54068\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:4000/api/generate-api-key",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "generate-api-key"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:4000/api/events/funnel?events=signup,add_to_cart,purchase&period=7d",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:4000/api/events/funnel?events=signup,view,checkout&country=IN&device=mobile",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "events", "funnel"],
+          "query": [
+            {
+              "key": "events",
+              "value": "signup,view,checkout"
+            },
+            {
+              "key": "country",
+              "value": "IN"
+            },
+            {
+              "key": "device",
+              "value": "mobile"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "User Journeys",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:4000/api/events/journeys?period=7d&limit=10",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "events", "journeys"],
+          "query": [
+            {
+              "key": "period",
+              "value": "7d"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "one user journey",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:4000/api/events/users/a/journey",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "events", "users", "a", "journey"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "one user journey diff parameter",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:4000/api/events/journeys?device=mobile&country=IN",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "events", "journeys"],
+          "query": [
+            {
+              "key": "device",
+              "value": "mobile"
+            },
+            {
+              "key": "country",
+              "value": "IN"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "retention",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:4000/api/events/retention?targetEvent=signup&country=US&device=desktop",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "events", "retention"],
+          "query": [
+            {
+              "key": "targetEvent",
+              "value": "signup"
+            },
+            {
+              "key": "country",
+              "value": "US"
+            },
+            {
+              "key": "device",
+              "value": "desktop"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "retention with days",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:4000/api/events/retention?cohort=signup&period=7",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "events", "retention"],
+          "query": [
+            {
+              "key": "cohort",
+              "value": "signup"
+            },
+            {
+              "key": "period",
+              "value": "7"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "retention with days Copy",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:4000/api/events/retention?cohort=signup&period=7",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "events", "retention"],
+          "query": [
+            {
+              "key": "cohort",
+              "value": "signup"
+            },
+            {
+              "key": "period",
+              "value": "7"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "retention with days Copy 2",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "test-123",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:4000/api/events/retention?cohort=signup&period=7",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "events", "retention"],
+          "query": [
+            {
+              "key": "cohort",
+              "value": "signup"
+            },
+            {
+              "key": "period",
+              "value": "7"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
