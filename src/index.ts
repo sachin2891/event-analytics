@@ -8,7 +8,7 @@ import eventRoutes from "./routes/eventRoutes";
 import apiKeyRoutes from "./routes/apiKeyRoutes";
 import analytics from "./routes/analytics";
 import { apiRateLimiter } from "./middlewares/rateLimiter";
-// import { initSocketIO } from "../src/jobs/socket";
+import { initSocketIO } from "../src/jobs/socket";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import path from "path";

@@ -2,7 +2,7 @@ import { Request } from "express";
 
 export function buildMatchFilter(req: Request) {
   const filter: any = {
-    orgId: (req as any).orgId, // manually attached via middleware
+    orgId: (req as any).orgId,
     projectId: (req as any).projectId,
   };
 
