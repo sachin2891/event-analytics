@@ -60,6 +60,8 @@ router.get("/metrics", authMiddleware, async (req, res) => {
 
     const result = await Event.aggregate(pipeline);
 
+    // console.log(result1);
+
     const response = {
       eventName,
       totalEvents: result[0]?.totalEvents[0]?.count || 0,
@@ -258,6 +260,7 @@ router.get("/retention", authMiddleware, async (req, res) => {
 
       return { cohort, retention };
     });
+    // console.log(result);
 
     res.json(result);
   } catch (err) {

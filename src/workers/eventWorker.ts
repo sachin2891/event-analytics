@@ -14,7 +14,8 @@ const worker = new Worker(
     await Event.insertMany(events);
 
     console.log(`✅ Inserted ${events.length} events into MongoDB`);
-    emitLiveCountUpdate(events.length);
+    // emitLiveCountUpdate(events.length);
+    emitLiveCountUpdate({ eventName: "total", count: events.length }); // ✅
   },
   { connection }
 );

@@ -2,6 +2,7 @@ import express from "express";
 import { eventSchema } from "../validations/eventSchema";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { eventQueue } from "../jobs/eventQueue";
+import { emitLiveCountUpdate } from "../jobs/socket";
 
 const router = express.Router();
 
@@ -42,6 +43,17 @@ router.post("/events", authMiddleware, async (req, res) => {
       return res
         .status(400)
         .json({ success: false, error: "No valid events found in payload" });
+    }
+    const eventCounts: Record<string, number> = {};
+    for (const ev of validEvents) {
+      eventCounts[ev.eventName] = (eventCounts[ev.eventName] || 0) + 1;
+    }
+    // console.log(eventCounts);
+
+    for (const [eventName, count] of Object.entries(eventCounts)) {
+      // console.log({ eventName, count });
+
+      emitLiveCountUpdate({ eventName, count });
     }
 
     await eventQueue.add("ingestBatch", { events: validEvents });
