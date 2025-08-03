@@ -1,88 +1,189 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: event-analytics API
   version: 1.0.0
+  description: API documentation for the event-analytics backend
 servers:
-  - url: http://localhost:4000
+  - url: http://localhost:4000/api
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+  parameters:
+    ApiKeyHeader:
+      in: header
+      name: x-api-key
+      schema:
+        type: string
+      required: true
+      description: API key for authentication
+
+  schemas:
+    ApiKey:
+      type: object
+      properties:
+        _id:
+          type: string
+        key:
+          type: string
+        orgId:
+          type: string
+        projectId:
+          type: string
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        __v:
+          type: integer
+
+    Event:
+      type: object
+      properties:
+        _id:
+          type: string
+        userId:
+          type: string
+        eventName:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        orgId:
+          type: string
+        projectId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        __v:
+          type: integer
+
+    MetricsResponse:
+      type: object
+      properties:
+        eventName:
+          type: string
+        totalEvents:
+          type: integer
+        uniqueUsers:
+          type: integer
+        dailyBreakdown:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              count:
+                type: integer
+
+    FunnelResponse:
+      type: object
+      properties:
+        steps:
+          type: array
+          items:
+            type: object
+            properties:
+              event:
+                type: string
+              users:
+                type: integer
+
+    RetentionResponse:
+      type: object
+      properties:
+        cohort:
+          type: string
+        retention:
+          type: array
+          items:
+            type: object
+            properties:
+              day:
+                type: integer
+              users:
+                type: integer
+
+    JourneyResponse:
+      type: object
+      properties:
+        journeys:
+          type: array
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+              events:
+                type: array
+                items:
+                  type: string
+
+    UserJourneyResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+        events:
+          type: array
+          items:
+            type: object
+            properties:
+              event:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+
 paths:
-  /api/protected:
+  /protected:
     get:
-      summary: Protected endpoint
+      summary: Test protected endpoint
+      security:
+        - ApiKeyAuth: []
       parameters:
-        - in: header
-          name: x-api-key
-          schema:
-            type: string
-          required: true
-          description: API key header
+        - $ref: "#/components/parameters/ApiKeyHeader"
       responses:
         "200":
           description: Success
-  /api/events/metrics:
+
+  /apikeys/active:
     get:
-      summary: Get event metrics
+      summary: Get all active API keys
+      security:
+        - ApiKeyAuth: []
       parameters:
-        - in: header
-          name: x-api-key
-          schema:
-            type: string
-          required: true
-        - in: query
-          name: eventName
-          schema:
-            type: string
-          required: true
-        - in: query
-          name: period
-          schema:
-            type: string
-          required: false
+        - $ref: "#/components/parameters/ApiKeyHeader"
       responses:
         "200":
-          description: Metrics response
-  /api/events:
+          description: List of active API keys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ApiKey"
+
+  /generate-api-key:
     post:
-      summary: Create new events
+      summary: Generate a new API key for an organization/project
+      security:
+        - ApiKeyAuth: []
       parameters:
-        - in: header
-          name: Content-Type
-          schema:
-            type: string
-          required: true
-        - in: header
-          name: x-api-key
-          schema:
-            type: string
-          required: true
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: object
-                properties:
-                  userId:
-                    type: string
-                  eventName:
-                    type: string
-                  timestamp:
-                    type: string
-                    format: date-time
-            example:
-              - userId: a
-                eventName: signup
-                timestamp: "2025-07-20T10:00:00Z"
-              - userId: a
-                eventName: view
-                timestamp: "2025-07-21T11:00:00Z"
-      responses:
-        "201":
-          description: Created
-  /api/generate-api-key:
-    post:
-      summary: Generate API key
+        - $ref: "#/components/parameters/ApiKeyHeader"
       requestBody:
         required: true
         content:
@@ -90,128 +191,187 @@ paths:
             schema:
               type: object
               properties:
-                orgId:
+                orgName:
                   type: string
-                projectId:
+                projectName:
                   type: string
-            example:
-              orgId: 688207a82bff847ec3b54067
-              projectId: 688208c42bff847ec3b54068
       responses:
         "200":
-          description: API key generated
-  /api/events/funnel:
-    get:
-      summary: Get event funnel
+          description: Returns the newly created API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiKey"
+
+  /events:
+    post:
+      summary: Ingest event(s)
+      security:
+        - ApiKeyAuth: []
       parameters:
-        - in: header
-          name: x-api-key
-          schema:
-            type: string
-          required: true
-        - in: query
-          name: events
-          schema:
-            type: string
-          required: true
-          description: Comma separated events, e.g. signup,view,checkout
-        - in: query
-          name: country
-          schema:
-            type: string
-          required: false
-        - in: query
-          name: device
-          schema:
-            type: string
-          required: false
+        - $ref: "#/components/parameters/ApiKeyHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/Event"
+                - type: array
+                  items:
+                    $ref: "#/components/schemas/Event"
       responses:
         "200":
-          description: Funnel data
-  /api/events/journeys:
+          description: Event(s) ingested
+
+  /events/metrics:
     get:
-      summary: Get user journeys
+      summary: Metrics for a single event type
+      security:
+        - ApiKeyAuth: []
       parameters:
-        - in: header
-          name: x-api-key
-          schema:
-            type: string
+        - $ref: "#/components/parameters/ApiKeyHeader"
+        - name: eventName
+          in: query
           required: true
-        - in: query
-          name: period
           schema:
             type: string
+        - name: period
+          in: query
           required: false
-        - in: query
-          name: limit
+          schema:
+            type: string
+            example: "7d"
+      responses:
+        "200":
+          description: Event metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetricsResponse"
+
+  /events/funnel:
+    get:
+      summary: Get funnel data for a list of event steps
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ApiKeyHeader"
+        - name: events
+          in: query
+          required: true
+          description: Comma-separated event names
+          schema:
+            type: string
+        - name: period
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Funnel analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FunnelResponse"
+
+  /events/journeys:
+    get:
+      summary: Get user journeys over a period
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ApiKeyHeader"
+        - name: period
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
           schema:
             type: integer
+        - name: device
+          in: query
           required: false
-        - in: query
-          name: device
           schema:
             type: string
+        - name: country
+          in: query
           required: false
-        - in: query
-          name: country
           schema:
             type: string
-          required: false
       responses:
         "200":
-          description: Journey data
-  /api/events/users/{userId}/journey:
+          description: Array of journeys
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JourneyResponse"
+
+  /events/users/{userId}/journey:
     get:
-      summary: Get one user journey
+      summary: Get one user's journey data
+      security:
+        - ApiKeyAuth: []
       parameters:
-        - in: header
-          name: x-api-key
+        - $ref: "#/components/parameters/ApiKeyHeader"
+        - name: userId
+          in: path
+          required: true
           schema:
             type: string
-          required: true
-        - in: path
-          name: userId
-          schema:
-            type: string
-          required: true
-          description: User ID
       responses:
         "200":
-          description: User journey data
-  /api/events/retention:
+          description: User's journey
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserJourneyResponse"
+
+  /events/retention:
     get:
-      summary: Get retention data
+      summary: Get retention analytics for a cohort event
+      security:
+        - ApiKeyAuth: []
       parameters:
-        - in: header
-          name: x-api-key
-          schema:
-            type: string
+        - $ref: "#/components/parameters/ApiKeyHeader"
+        - name: cohort
+          in: query
           required: true
-        - in: query
-          name: targetEvent
           schema:
             type: string
+          description: Cohort starting event (e.g. signup, login, etc)
+        - name: period
+          in: query
           required: false
-        - in: query
-          name: cohort
           schema:
             type: string
+            example: "7"
+          description: Days to include
+        - name: targetEvent
+          in: query
           required: false
-        - in: query
-          name: period
           schema:
             type: string
+        - name: device
+          in: query
           required: false
-        - in: query
-          name: country
           schema:
             type: string
+        - name: country
+          in: query
           required: false
-        - in: query
-          name: device
           schema:
             type: string
-          required: false
       responses:
         "200":
-          description: Retention data
+          description: Retention data by cohort
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RetentionResponse"
+security:
+  - ApiKeyAuth: []
