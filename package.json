@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "worker": "ts-node src/worker.ts"
+    "worker": "ts-node src/worker.ts",
+    "start:all": "concurrently \"npm run dev\" \"npm run worker\""
   },
   "keywords": [],
   "author": "",
@@ -40,6 +41,7 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "@types/yamljs": "^0.2.34",
+    "concurrently": "^9.2.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   }
